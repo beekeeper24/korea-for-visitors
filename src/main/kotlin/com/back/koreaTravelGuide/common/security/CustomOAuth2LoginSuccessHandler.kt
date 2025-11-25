@@ -34,6 +34,8 @@ class CustomOAuth2LoginSuccessHandler(
 
         val user = userRepository.findByEmail(email)!!
 
+        val useSecureCookie = request.isSecure || AppConfig.siteFrontUrl.startsWith("https")
+
         if (user.role == UserRole.PENDING) {
             val registerToken = jwtTokenProvider.createRegisterToken(user.id!!)
 
@@ -50,11 +52,8 @@ class CustomOAuth2LoginSuccessHandler(
             val cookie =
                 Cookie("refreshToken", refreshToken).apply {
                     isHttpOnly = true
-
-                    secure = true
-
+                    secure = useSecureCookie
                     path = "/"
-
                     maxAge = (refreshTokenExpirationDays * 24 * 60 * 60).toInt()
                 }
 

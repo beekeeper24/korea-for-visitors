@@ -1,6 +1,7 @@
 package com.back.koreaTravelGuide.domain.auth.controller
 
 import com.back.koreaTravelGuide.common.ApiResponse
+import com.back.koreaTravelGuide.common.config.AppConfig
 import com.back.koreaTravelGuide.common.security.getUserId
 import com.back.koreaTravelGuide.domain.auth.dto.request.UserRoleUpdateRequest
 import com.back.koreaTravelGuide.domain.auth.dto.response.AccessTokenResponse
@@ -30,11 +31,12 @@ class AuthController(
         response: HttpServletResponse,
     ): ResponseEntity<ApiResponse<AccessTokenResponse>> {
         val (newAccessToken, newRefreshToken) = authService.refreshAccessToken(refreshToken)
+        val useSecureCookie = AppConfig.siteFrontUrl.startsWith("https")
 
         val cookie =
             jakarta.servlet.http.Cookie("refreshToken", newRefreshToken).apply {
                 isHttpOnly = true
-                secure = true
+                secure = useSecureCookie
                 path = "/"
                 maxAge = (refreshTokenExpirationDays * 24 * 60 * 60).toInt()
             }
@@ -52,11 +54,12 @@ class AuthController(
     ): ResponseEntity<ApiResponse<AccessTokenResponse>> {
         val userId = authentication.getUserId()
         val (accessToken, refreshToken) = authService.updateRoleAndLogin(userId, request.role)
+        val useSecureCookie = AppConfig.siteFrontUrl.startsWith("https")
 
         val cookie =
             Cookie("refreshToken", refreshToken).apply {
                 isHttpOnly = true
-                secure = true
+                secure = useSecureCookie
                 path = "/"
                 maxAge = (refreshTokenExpirationDays * 24 * 60 * 60).toInt()
             }
