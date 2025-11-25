@@ -1,5 +1,7 @@
 # 🇰🇷 한국 여행 가이드 API (Backend)
 
+https://korea-travel-guide.vercel.app/ko
+
 > OAuth 인증, AI 채팅, Guest-Guide 매칭이 가능한 한국 여행 가이드 백엔드 (MVP)
 
 ## 📋 주요 특징
